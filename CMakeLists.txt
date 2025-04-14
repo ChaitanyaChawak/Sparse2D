@@ -50,6 +50,25 @@ message(STATUS "CMake Build Type: ${CMAKE_BUILD_TYPE}")
 # Set RPATH options
 set(CMAKE_INSTALL_RPATH "${CMAKE_BINARY_DIR}/lib")
 
+# Set default install prefix to current working dir
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}" CACHE PATH "Install path prefix" FORCE)
+endif()
+
+# Find Python and its site-packages path
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+
+# Get the site-packages directory from Python
+execute_process(
+  COMMAND ${Python3_EXECUTABLE} -c "import site; print(site.getsitepackages()[0])"
+  OUTPUT_VARIABLE PYBIND_INSTALL_PATH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Optional: print paths for debug
+message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "Python site-packages: ${PYBIND_INSTALL_PATH}")
+
 # ----------------- #
 # Find Dependencies #
 # ----------------- #
